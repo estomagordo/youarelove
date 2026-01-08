@@ -29,7 +29,7 @@ const RevealStrip = ({
 }: RevealStripProps) => {
   const heightPercent = 100 / totalStrips;
   const shouldFlip = isRevealed || isFlipping;
-
+  
   return (
     <div
       className="absolute w-full flip-container"
@@ -51,8 +51,19 @@ const RevealStrip = ({
               "transition-all duration-300",
               "hover:ring-4 hover:ring-primary hover:z-10",
               "group",
+              "bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200",
+              "shadow-md",
+              "border-x border-slate-300/60",
+              visualIndex === 0 && "border-t border-slate-300/60",
+              visualIndex === totalStrips - 1 && "border-b border-slate-300/60",
+              "rounded-sm",
               (isRevealed || isFlipping || isSwapping) && "pointer-events-none"
             )}
+            style={{
+              boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1)",
+              borderTopWidth: visualIndex > 0 ? "2px" : undefined,
+              borderBottomWidth: visualIndex < totalStrips - 1 ? "2px" : undefined,
+            }}
             aria-label={`Reveal section ${visualIndex + 1}`}
           >
             {/* Clipped portion of the full image */}
@@ -76,7 +87,14 @@ const RevealStrip = ({
         </div>
 
         {/* Back face - Revealed text */}
-        <div className="flip-face flip-back bg-background flex items-center justify-center overflow-hidden">
+        <div 
+          className="flip-face flip-back bg-gradient-to-b from-slate-200 via-slate-100 to-slate-200 border-x border-slate-300/60 shadow-md rounded-sm flex items-center justify-center overflow-hidden"
+          style={{
+            borderTopWidth: visualIndex === 0 ? "1px" : "2px",
+            borderBottomWidth: visualIndex === totalStrips - 1 ? "1px" : "2px",
+            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1)",
+          }}
+        >
           <p 
             className="text-foreground text-lg md:text-xl lg:text-2xl text-center font-medium px-8 transition-all duration-500 ease-in-out"
             style={{

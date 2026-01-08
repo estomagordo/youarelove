@@ -101,9 +101,46 @@ const InteractiveReveal = () => {
   const [visualOrder, setVisualOrder] = useState<number[]>(() => generateValidShuffle(revealData.length));
   const [isAnimating, setIsAnimating] = useState(false);
   const [swappingIndices, setSwappingIndices] = useState<{ i: number; j: number } | null>(null);
+  const [containerSize, setContainerSize] = useState<{ width: number; height: number } | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const totalStrips = revealData.length;
+  const imageAspectRatio = 2735 / 2467;
+
+  // Calculate container size to fit viewport
+  useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current?.parentElement) {
+        const parent = containerRef.current.parentElement;
+        const availableWidth = parent.clientWidth;
+        const availableHeight = parent.clientHeight;
+        
+        // Calculate size maintaining aspect ratio
+        const widthByHeight = availableHeight * imageAspectRatio;
+        const heightByWidth = availableWidth / imageAspectRatio;
+        
+        let width: number;
+        let height: number;
+        
+        if (widthByHeight <= availableWidth) {
+          // Constrained by height
+          height = availableHeight;
+          width = widthByHeight;
+        } else {
+          // Constrained by width
+          width = availableWidth;
+          height = heightByWidth;
+        }
+        
+        setContainerSize({ width, height });
+      }
+    };
+    
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, [imageAspectRatio]);
 
   // Initialize audio and play on mount
   useEffect(() => {
@@ -228,13 +265,16 @@ const InteractiveReveal = () => {
       />
 
       {/* Container with aspect ratio matching the image - fits within viewport */}
-      <div className="relative w-full flex-1 flex items-center justify-center p-4">
+      <div className="relative w-full flex-1 flex items-center justify-center bg-background min-h-0 overflow-hidden">
         <div
-          className="relative w-full h-full max-w-5xl mx-auto"
+          ref={containerRef}
+          className="relative mx-auto"
           style={{ 
             aspectRatio: "2735/2467",
-            maxHeight: "100%",
+            width: containerSize ? `${containerSize.width}px` : "100%",
+            height: containerSize ? `${containerSize.height}px` : "auto",
             maxWidth: "100%",
+            maxHeight: "100%",
           }}
         >
         {/* Render strips in visual order (0, 1, 2, ...) but with shuffled data assignments */}
