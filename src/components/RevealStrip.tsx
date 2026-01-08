@@ -1,53 +1,66 @@
 import { cn } from "@/lib/utils";
 
+const SWAP_DURATION_MS = 500;
+
 interface RevealStripProps {
-  index: number;
+  visualIndex: number;
+  dataIndex: number;
   totalStrips: number;
   isRevealed: boolean;
   isFlipping: boolean;
   revealedText: string;
   imageUrl: string;
   onReveal: () => void;
+  isSwapping?: boolean;
+  swapDirection?: number; // -1 for moving up, 1 for moving down, 0 for no swap
 }
 
 const RevealStrip = ({
-  index,
+  visualIndex,
+  dataIndex,
   totalStrips,
   isRevealed,
   isFlipping,
   revealedText,
   imageUrl,
   onReveal,
+  isSwapping = false,
+  swapDirection = 0,
 }: RevealStripProps) => {
   const heightPercent = 100 / totalStrips;
   const shouldFlip = isRevealed || isFlipping;
 
   return (
     <div
-      className="relative w-full flip-container"
-      style={{ height: `${heightPercent}%` }}
+      className="absolute w-full flip-container"
+      style={{
+        height: `${heightPercent}%`,
+        top: `${visualIndex * heightPercent}%`,
+        transition: `top ${SWAP_DURATION_MS}ms ease-in-out`,
+        zIndex: isSwapping ? 10 : 1,
+      }}
     >
       <div className={cn("flip-card", shouldFlip && "flipped")}>
         {/* Front face - Image strip */}
         <div className="flip-face">
           <button
             onClick={onReveal}
-            disabled={isRevealed || isFlipping}
+            disabled={isRevealed || isFlipping || isSwapping}
             className={cn(
               "w-full h-full cursor-pointer overflow-hidden relative",
               "transition-all duration-300",
               "hover:ring-4 hover:ring-primary hover:z-10",
               "group",
-              (isRevealed || isFlipping) && "pointer-events-none"
+              (isRevealed || isFlipping || isSwapping) && "pointer-events-none"
             )}
-            aria-label={`Reveal section ${index + 1}`}
+            aria-label={`Reveal section ${visualIndex + 1}`}
           >
             {/* Clipped portion of the full image */}
             <div
               className="absolute w-full"
               style={{
                 height: `${totalStrips * 100}%`,
-                top: `-${index * 100}%`,
+                top: `-${dataIndex * 100}%`,
               }}
             >
               <img
