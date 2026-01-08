@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { revealData } from "@/data/revealData";
 import RevealStrip from "./RevealStrip";
 import PopupModal from "./PopupModal";
@@ -12,8 +12,36 @@ const InteractiveReveal = () => {
   const [popupMessage, setPopupMessage] = useState<string | null>(null);
   const [pendingRevealIndex, setPendingRevealIndex] = useState<number | null>(null);
   const [showLearnedModal, setShowLearnedModal] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const totalStrips = revealData.length;
+
+  // Initialize audio and play on mount
+  useEffect(() => {
+    const audio = new Audio("/The Way I Feel Inside.mp3");
+    audio.loop = false; // Don't repeat
+    audioRef.current = audio;
+
+    // Attempt to play on load
+    const playAudio = async () => {
+      try {
+        await audio.play();
+      } catch (error) {
+        // Autoplay may be blocked by browser, user interaction required
+        console.log("Autoplay blocked, user interaction required");
+      }
+    };
+
+    playAudio();
+
+    // Cleanup on unmount
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   const handleReveal = (index: number) => {
     // Show popup but don't reveal yet
@@ -42,6 +70,13 @@ const InteractiveReveal = () => {
     setRevealedIndices(new Set());
     setFlippingIndex(null);
     setPendingRevealIndex(null);
+    // Also restart the audio
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch((error) => {
+        console.log("Error playing audio:", error);
+      });
+    }
   };
 
   return (
