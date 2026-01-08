@@ -9,7 +9,7 @@ export const revealData: RevealEntry[] = [
   ["Your efficient dealing with life matters", "Words any fool could understand E"],
   ["How small, seemingly insignificant, but often cute things can steal your attention", "I wonder if there could be a better way F"],
   ["The incredible warmth with which you've accepted me and those who come with me", "Than this simple truth: G"],
-  ["That telling you", "H"],
+  ["", "H"],
   ["", "*ahem* I "],
   ["", "Telling others about you J"],
   ["", "Invariably sounds like bragging K"],

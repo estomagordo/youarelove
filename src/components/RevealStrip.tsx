@@ -36,7 +36,7 @@ const RevealStrip = ({
       style={{
         height: `${heightPercent}%`,
         top: `${visualIndex * heightPercent}%`,
-        transition: `top ${SWAP_DURATION_MS}ms ease-in-out`,
+        // No position animation - strips stay in place, only text content swaps
         zIndex: isSwapping ? 10 : 1,
       }}
     >
@@ -60,7 +60,7 @@ const RevealStrip = ({
               className="absolute w-full"
               style={{
                 height: `${totalStrips * 100}%`,
-                top: `-${dataIndex * 100}%`,
+                top: `-${visualIndex * 100}%`,
               }}
             >
               <img
@@ -76,8 +76,16 @@ const RevealStrip = ({
         </div>
 
         {/* Back face - Revealed text */}
-        <div className="flip-face flip-back bg-background flex items-center justify-center">
-          <p className="text-foreground text-lg md:text-xl lg:text-2xl text-center font-medium px-8">
+        <div className="flip-face flip-back bg-background flex items-center justify-center overflow-hidden">
+          <p 
+            className="text-foreground text-lg md:text-xl lg:text-2xl text-center font-medium px-8 transition-all duration-500 ease-in-out"
+            style={{
+              transform: isSwapping 
+                ? `translateY(${swapDirection * 100}%)` 
+                : 'translateY(0)',
+              opacity: isSwapping ? 0.7 : 1,
+            }}
+          >
             {revealedText}
           </p>
         </div>

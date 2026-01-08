@@ -221,17 +221,23 @@ const InteractiveReveal = () => {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-background">
+    <div className="relative w-full h-screen overflow-hidden bg-background flex flex-col">
       <ControlButtons
         onReset={handleReset}
         onShowLearned={() => setShowLearnedModal(true)}
       />
 
-      {/* Container with aspect ratio matching the image */}
-      <div
-        className="relative w-full max-w-5xl mx-auto"
-        style={{ aspectRatio: "2735/2467" }}
-      >
+      {/* Container with aspect ratio matching the image - fits within viewport */}
+      <div className="relative w-full flex-1 flex items-center justify-center p-4">
+        <div
+          className="relative w-full h-full max-w-5xl mx-auto"
+          style={{ 
+            aspectRatio: "2735/2467",
+            maxHeight: "100%",
+            maxWidth: "100%",
+          }}
+        >
+        {/* Render strips in visual order (0, 1, 2, ...) but with shuffled data assignments */}
         {visualOrder.map((dataIndex, visualIndex) => {
           const entry = revealData[dataIndex];
           const isSwapping = swappingIndices !== null && 
@@ -249,7 +255,7 @@ const InteractiveReveal = () => {
           
           return (
             <RevealStrip
-              key={`strip-${dataIndex}`}
+              key={`strip-${visualIndex}-${dataIndex}`}
               visualIndex={visualIndex}
               dataIndex={dataIndex}
               totalStrips={totalStrips}
@@ -263,6 +269,7 @@ const InteractiveReveal = () => {
             />
           );
         })}
+        </div>
       </div>
 
       {/* Modals */}
