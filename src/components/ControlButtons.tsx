@@ -26,7 +26,7 @@ const ControlButtons = ({ onReset, onShowLearned }: ControlButtonsProps) => {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>What we have learned</p>
+          <p>Some of the things I admire about you</p>
         </TooltipContent>
       </Tooltip>
 
