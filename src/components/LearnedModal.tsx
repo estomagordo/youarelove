@@ -21,7 +21,7 @@ const LearnedModal = ({ isOpen, onClose, revealedIndices }: LearnedModalProps) =
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-lg max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl">What We Have Learned</DialogTitle>
+          <DialogTitle className="text-xl">Things I admire about you</DialogTitle>
         </DialogHeader>
         <div className="space-y-3 pt-4">
           {learnedMessages.length === 0 ? (
